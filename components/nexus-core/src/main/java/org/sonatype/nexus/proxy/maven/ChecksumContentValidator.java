@@ -197,7 +197,7 @@ public class ChecksumContentValidator
           doStoreChechsumItem(proxy, artifact, attrname, checksumItem);
         }
         catch (ItemNotFoundException | RemoteStorageException e) {
-          // add checksum path to NFC
+          // could not fetch checksum, add request to NFC
           proxy.addToNotFoundCache(checksumRequest);
         }
       }
