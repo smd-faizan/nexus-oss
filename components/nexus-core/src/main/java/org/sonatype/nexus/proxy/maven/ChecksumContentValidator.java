@@ -77,11 +77,8 @@ public class ChecksumContentValidator
         String path = remoteHash.getHashItem().getRepositoryItemUid().getPath();
         proxy.getLocalStorage().deleteItem(proxy, new ResourceStoreRequest(path, true));
       }
-      catch (ItemNotFoundException e) {
+      catch (ItemNotFoundException | UnsupportedStorageOperationException e) {
         // ignore
-      }
-      catch (UnsupportedStorageOperationException e) {
-        // huh?
       }
     }
   }
