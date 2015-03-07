@@ -193,8 +193,8 @@ public class ChecksumContentValidator
           StorageFileItem checksumItem =
               (StorageFileItem) proxy.getRemoteStorage().retrieveItem(proxy, checksumRequest, proxy.getRemoteUrl());
 
-          // fetched checksum, now store it in attributes
-          doStoreChechsumItem(proxy, artifact, attrname, checksumItem);
+          // fetched checksum item, extract hash and store it in attributes
+          hash = doStoreChechsumItem(proxy, artifact, attrname, checksumItem);
         }
         catch (ItemNotFoundException | RemoteStorageException e) {
           // could not fetch checksum, add request to NFC
@@ -239,10 +239,10 @@ public class ChecksumContentValidator
     }
   }
 
-  private static void doStoreChechsumItem(final ProxyRepository proxy,
-                                          final StorageItem artifact,
-                                          final String attrname,
-                                          final StorageFileItem checksumItem)
+  private static String doStoreChechsumItem(final ProxyRepository proxy,
+                                            final StorageItem artifact,
+                                            final String attrname,
+                                            final StorageFileItem checksumItem)
       throws IOException
   {
     // Load checksum hash to store in attributes from item
@@ -268,6 +268,8 @@ public class ChecksumContentValidator
     finally {
       itemUid.getLock().unlock();
     }
+
+    return hash;
   }
 
   public static DefaultStorageFileItem newHashItem(ProxyRepository proxy, ResourceStoreRequest request,
