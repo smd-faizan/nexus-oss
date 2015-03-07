@@ -165,6 +165,12 @@ public class ChecksumContentValidator
     return doRetrieveChecksumItem(proxy, hashRequest, artifact, DIGEST_MD5_KEY, ATTR_REMOTE_MD5);
   }
 
+  /**
+   * Attempt to retrieve the checksum for the given artifact storage-item.
+   *
+   * If the checksum is cached in item attributes, then it is returned.  Otherwise attempt to fetch
+   * the remote checksum from upstream and cache in attributes.
+   */
   private static RemoteHashResponse doRetrieveChecksumItem(ProxyRepository proxy,
                                                            ResourceStoreRequest checksumRequest,
                                                            StorageItem artifact,
