@@ -31,7 +31,6 @@ import org.sonatype.nexus.proxy.AccessDeniedException;
 import org.sonatype.nexus.proxy.IllegalOperationException;
 import org.sonatype.nexus.proxy.IllegalRequestException;
 import org.sonatype.nexus.proxy.ItemNotFoundException;
-import org.sonatype.nexus.proxy.ItemNotFoundException.ItemNotFoundInRepositoryReason;
 import org.sonatype.nexus.proxy.LocalStorageException;
 import org.sonatype.nexus.proxy.RepositoryNotAvailableException;
 import org.sonatype.nexus.proxy.ResourceStoreRequest;
@@ -1127,10 +1126,7 @@ public abstract class AbstractRepository
   @Override
   public void addToNotFoundCache(ResourceStoreRequest request) {
     if (isNotFoundCacheActive()) {
-      if (log.isDebugEnabled()) {
-        log.debug("Adding path " + request.getRequestPath() + " to NFC.");
-      }
-
+      log.debug("Adding path to NFC: {}", request.getRequestPath());
       getNotFoundCache().put(request.getRequestPath(), Boolean.TRUE, getNotFoundCacheTimeToLive() * 60);
     }
   }
