@@ -47,7 +47,6 @@ public class ChecksumContentValidator
     extends AbstractChecksumContentValidator
     implements ItemContentValidator
 {
-
   public static final String ID = "ChecksumContentValidator";
 
   public static final String SUFFIX_MD5 = ".md5";
@@ -55,15 +54,16 @@ public class ChecksumContentValidator
   public static final String SUFFIX_SHA1 = ".sha1";
 
   /**
-   * Key of item attribute that holds contents of remote .sha1 file. The attribute is not present if the item does
-   * not
-   * have corresponding .sha1 file
+   * Key of item attribute that holds contents of remote .sha1 file.
+   *
+   * The attribute is not present if the item does not have corresponding .sha1 file.
    */
   public static final String ATTR_REMOTE_SHA1 = "remote.sha1";
 
   /**
-   * Key of item attribute that holds contents of remote .md5 file. The attribute is not present if the item does not
-   * have corresponding .md5 file
+   * Key of item attribute that holds contents of remote .md5 file.
+   *
+   * The attribute is not present if the item does not have corresponding .md5 file.
    */
   public static final String ATTR_REMOTE_MD5 = "remote.md5";
 
@@ -239,6 +239,15 @@ public class ChecksumContentValidator
     }
   }
 
+  /**
+   * Store checksum information for given artifact in attributes.
+   *
+   * @param proxy         Proxy repository where artifact lives.
+   * @param artifact      Artifact storage-item.
+   * @param attrname      Checksum attribute name.
+   * @param checksumItem  Checksum storage-item.
+   * @return              Checksum hash, read from checksum storage-item.
+   */
   private static String doStoreChechsumItem(final ProxyRepository proxy,
                                             final StorageItem artifact,
                                             final String attrname,
