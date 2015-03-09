@@ -1099,11 +1099,8 @@ public abstract class AbstractRepository
     if (isNotFoundCacheActive() && !request.isRequestAsExpired()) {
       if (getNotFoundCache().contains(request.getRequestPath())) {
         if (getNotFoundCache().isExpired(request.getRequestPath())) {
-          if (log.isDebugEnabled()) {
-            log.debug("The path " + request.getRequestPath() + " is in NFC but expired.");
-          }
-
-          removeFromNotFoundCache(request);
+          log.debug("Removing expired path from NFC: {}", request.getRequestPath());
+          getNotFoundCache().removeWithParents(request.getRequestPath());
         }
         else {
           StringBuilder sb = new StringBuilder("The path ").append(request.getRequestPath()).append(" is cached ");
@@ -1137,10 +1134,7 @@ public abstract class AbstractRepository
   @Override
   public void removeFromNotFoundCache(ResourceStoreRequest request) {
     if (isNotFoundCacheActive()) {
-      if (log.isDebugEnabled()) {
-        log.debug("Removing path " + request.getRequestPath() + " from NFC.");
-      }
-
+      log.debug("Removing path from NFC: {}", request.getRequestPath());
       getNotFoundCache().removeWithParents(request.getRequestPath());
     }
   }
