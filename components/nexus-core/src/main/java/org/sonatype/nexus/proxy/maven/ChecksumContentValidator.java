@@ -184,10 +184,8 @@ public class ChecksumContentValidator
         throw new LocalStorageException("Null item repository attributes");
       }
 
-      // Check if checksum path is in NFC
-      if (proxy.getNotFoundCache().contains(checksumRequest.getRequestPath()) && !checksumRequest.isRequestAsExpired()) {
-        throw new ItemNotFoundException(checksumRequest);
-      }
+      // check/expire checksum item NFC or throw not-found exception
+      proxy.maintainNotFoundCache(checksumRequest);
 
       // If attributes does not contain checksum hash, then attempt to fetch and store it
       String hash = attributes.get(attrname);
@@ -198,6 +196,9 @@ public class ChecksumContentValidator
 
           // fetched checksum item, extract hash and store it in attributes
           hash = doStoreChechsumItem(proxy, artifact, attrname, checksumItem);
+
+          // evict checksum item NFC now that it is found
+          proxy.removeFromNotFoundCache(checksumRequest);
         }
         catch (ItemNotFoundException | RemoteStorageException e) {
           // could not fetch checksum, add request to NFC
