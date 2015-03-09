@@ -1097,19 +1097,23 @@ public abstract class AbstractRepository
     // NEXUS-6177: skip NFC if request is "asExpired"
     // On outcome, if remotely found, will invalidate NFC by caching it
     if (isNotFoundCacheActive() && !request.isRequestAsExpired()) {
-      if (getNotFoundCache().contains(request.getRequestPath())) {
-        if (getNotFoundCache().isExpired(request.getRequestPath())) {
-          log.debug("Removing expired path from NFC: {}", request.getRequestPath());
-          getNotFoundCache().removeWithParents(request.getRequestPath());
+      final PathCache nfc = getNotFoundCache();
+      final String requestPath = request.getRequestPath();
+
+      if (nfc.contains(requestPath)) {
+        if (nfc.isExpired(requestPath)) {
+          log.debug("Removing expired path from NFC: {}", requestPath);
+          nfc.removeWithParents(requestPath);
         }
         else {
-          StringBuilder sb = new StringBuilder("The path ").append(request.getRequestPath()).append(" is cached ");
-          long expirationTime = getNotFoundCache().getExpirationTime(request.getRequestPath());
-          if (expirationTime > 0) {
-            sb.append("until ").append(new DateTime(expirationTime)).append(" ");
-          }
-          final String message = sb.append("as not found in repository ").append(this).toString();
+          StringBuilder buff = new StringBuilder("The path ").append(requestPath).append(" is cached ");
 
+          long expirationTime = nfc.getExpirationTime(requestPath);
+          if (expirationTime > 0) {
+            buff.append("until ").append(new DateTime(expirationTime)).append(" ");
+          }
+
+          String message = buff.append("as not found in repository ").append(this).toString();
           log.debug(message);
           throw new ItemNotFoundException(reasonFor(request, this, message));
         }
