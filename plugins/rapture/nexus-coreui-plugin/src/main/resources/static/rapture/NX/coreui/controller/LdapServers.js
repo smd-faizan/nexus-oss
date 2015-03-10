@@ -262,8 +262,6 @@ Ext.define('NX.coreui.controller.LdapServers', {
     });
     Ext.apply(modelData, values);
 
-    //console.log(JSON.stringify(modelData));
-
     NX.direct.ldap_LdapServer.update(modelData, function(response) {
       if (Ext.isObject(response)) {
         if (response.success) {
@@ -292,8 +290,6 @@ Ext.define('NX.coreui.controller.LdapServers', {
     // Get fields from all relevant forms
     Ext.apply(values, connectionForm.getValues());
     Ext.apply(values, userGroupForm.getValues());
-
-    //console.log(values);
 
     NX.direct.ldap_LdapServer.create(values, function(response) {
       if (Ext.isObject(response)) {
