@@ -37,6 +37,21 @@ Ext.define('NX.coreui.view.ldap.LdapServerConnectionForm', {
 
     me.callParent(arguments);
 
+    Ext.override(me.getForm(), {
+      /**
+       * @override
+       * If selected, replaced the input value of the fieldset checkbox with true
+       */
+      getValues: function() {
+        var me = this,
+          values = me.callParent(arguments);
+
+        values.useTrustStore = values.useTrustStore ? true : false;
+
+        return values;
+      }
+    });
+
     me.getDockedItems('toolbar[dock="bottom"]')[0].add(
         { xtype: 'button', text: NX.I18n.get('ADMIN_LDAP_CONNECTION_VERIFY_BUTTON'), formBind: true, action: 'verifyconnection' }
     );

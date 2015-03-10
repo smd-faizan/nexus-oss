@@ -37,6 +37,22 @@ Ext.define('NX.coreui.view.ldap.LdapServerUserAndGroupForm', {
 
     me.callParent(arguments);
 
+    Ext.override(me.getForm(), {
+      /**
+       * @override
+       * If selected, replaced the input value of the fieldset checkbox with true
+       */
+      getValues: function() {
+        var me = this,
+          values = me.callParent(arguments);
+
+        values.userSubtree = values.userSubtree ? true : false;
+        values.ldapGroupsAsRoles = values.ldapGroupsAsRoles ? true : false;
+
+        return values;
+      }
+    });
+
     me.getDockedItems('toolbar[dock="bottom"]')[0].add(
         { xtype: 'button', text: NX.I18n.get('ADMIN_LDAP_GROUP_MAPPING_BUTTON'), formBind: true, action: 'verifyusermapping' },
         { xtype: 'button', text: NX.I18n.get('ADMIN_LDAP_GROUP_LOGIN_BUTTON'), formBind: true, action: 'verifylogin' }
