@@ -195,7 +195,7 @@ public class ChecksumContentValidator
               (StorageFileItem) proxy.getRemoteStorage().retrieveItem(proxy, checksumRequest, proxy.getRemoteUrl());
 
           // fetched checksum item, extract hash and store it in attributes
-          hash = doStoreChechsumItem(proxy, artifact, attrname, checksumItem);
+          hash = doStoreChecksumItem(proxy, artifact, attrname, checksumItem);
 
           // evict checksum item NFC now that it is found
           proxy.removeFromNotFoundCache(checksumRequest);
@@ -225,7 +225,7 @@ public class ChecksumContentValidator
       throws LocalStorageException
   {
     try {
-      doStoreChechsumItem(proxy, artifact, ATTR_REMOTE_SHA1, checksumItem);
+      doStoreChecksumItem(proxy, artifact, ATTR_REMOTE_SHA1, checksumItem);
     }
     catch (IOException e) {
       throw new LocalStorageException(e);
@@ -236,7 +236,7 @@ public class ChecksumContentValidator
       throws LocalStorageException
   {
     try {
-      doStoreChechsumItem(proxy, artifact, ATTR_REMOTE_MD5, checksumItem);
+      doStoreChecksumItem(proxy, artifact, ATTR_REMOTE_MD5, checksumItem);
     }
     catch (IOException e) {
       throw new LocalStorageException(e);
@@ -252,7 +252,7 @@ public class ChecksumContentValidator
    * @param checksumItem  Checksum storage-item.
    * @return              Checksum hash, read from checksum storage-item.
    */
-  private static String doStoreChechsumItem(final ProxyRepository proxy,
+  private static String doStoreChecksumItem(final ProxyRepository proxy,
                                             final StorageItem artifact,
                                             final String attrname,
                                             final StorageFileItem checksumItem)
