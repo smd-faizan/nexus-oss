@@ -252,12 +252,6 @@
 
       <dependency>
         <groupId>org.sonatype.nexus</groupId>
-        <artifactId>nexus-launcher</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.sonatype.nexus</groupId>
         <artifactId>nexus-locks</artifactId>
         <version>3.0.0-SNAPSHOT</version>
       </dependency>
@@ -339,12 +333,6 @@
       <dependency>
         <groupId>org.sonatype.nexus</groupId>
         <artifactId>nexus-test-common</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.sonatype.nexus</groupId>
-        <artifactId>nexus-testsuite-support</artifactId>
         <version>3.0.0-SNAPSHOT</version>
       </dependency>
 
@@ -525,15 +513,6 @@
           <groupId>org.sonatype.plugins</groupId>
           <artifactId>modello-plugin-upgrade</artifactId>
           <version>1.1</version>
-        </plugin>
-
-        <!--
-        Support for bridging maven configuration to test-suite executions; see 'it' profile.
-        -->
-        <plugin>
-          <groupId>org.sonatype.plugins</groupId>
-          <artifactId>sisu-maven-bridge-maven-plugin</artifactId>
-          <version>3.1</version>
         </plugin>
 
         <!--
@@ -991,17 +970,6 @@
       </activation>
       <build>
         <plugins>
-          <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>sisu-maven-bridge-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>export</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-failsafe-plugin</artifactId>
