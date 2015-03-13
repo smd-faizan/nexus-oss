@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedSet;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.sonatype.nexus.repository.nuget.internal.odata.ComponentQuery;
@@ -32,19 +31,18 @@ import com.sonatype.nexus.repository.nuget.internal.odata.NugetPackageUtils;
 import com.sonatype.nexus.repository.nuget.internal.odata.ODataFeedUtils;
 import com.sonatype.nexus.repository.nuget.internal.odata.ODataTemplates;
 import com.sonatype.nexus.repository.nuget.internal.odata.ODataUtils;
-import org.sonatype.nexus.common.io.TempStreamSupplier;
 
 import org.sonatype.nexus.blobstore.api.Blob;
 import org.sonatype.nexus.blobstore.api.BlobRef;
 import org.sonatype.nexus.blobstore.api.BlobStore;
 import org.sonatype.nexus.common.hash.HashAlgorithm;
+import org.sonatype.nexus.common.io.TempStreamSupplier;
 import org.sonatype.nexus.common.stateguard.Guarded;
 import org.sonatype.nexus.common.time.Clock;
 import org.sonatype.nexus.repository.FacetSupport;
 import org.sonatype.nexus.repository.MissingFacetException;
 import org.sonatype.nexus.repository.Repository;
 import org.sonatype.nexus.repository.proxy.ProxyFacet;
-import org.sonatype.nexus.repository.search.ComponentMetadataFactory;
 import org.sonatype.nexus.repository.storage.ComponentCreatedEvent;
 import org.sonatype.nexus.repository.storage.ComponentDeletedEvent;
 import org.sonatype.nexus.repository.storage.ComponentUpdatedEvent;
@@ -109,13 +107,6 @@ public class NugetGalleryFacetImpl
 
   private static final VersionScheme SCHEME = new GenericVersionScheme();
 
-  private final ComponentMetadataFactory componentMetadataFactory;
-
-  @Inject
-  public NugetGalleryFacetImpl(final ComponentMetadataFactory componentMetadataFactory) {
-    this.componentMetadataFactory = checkNotNull(componentMetadataFactory);
-  }
-
   @Override
   protected void doConfigure() throws Exception {
     storage = getRepository().facet(StorageFacet.class);
@@ -163,7 +154,7 @@ public class NugetGalleryFacetImpl
 
     // NEXUS-6822 Visual Studio doesn't send a sort order by default, leading to unusable results
     if (!query.containsKey("$orderby")) {
-      query.put("$orderby", P_DOWNLOAD_COUNT + " desc");
+      query.put("$orderby", DOWNLOAD_COUNT + " desc");
     }
     else {
       // OrientDB only supports ordering by identifiers, not by functions

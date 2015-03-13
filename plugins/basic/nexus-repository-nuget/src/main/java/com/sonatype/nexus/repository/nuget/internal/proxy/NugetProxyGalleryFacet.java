@@ -35,7 +35,6 @@ import com.sonatype.nexus.repository.nuget.internal.odata.ODataConsumer;
 import com.sonatype.nexus.repository.nuget.internal.odata.ODataUtils;
 
 import org.sonatype.nexus.repository.Repository;
-import org.sonatype.nexus.repository.search.ComponentMetadataFactory;
 import org.sonatype.nexus.repository.util.NestedAttributesMap;
 
 import com.google.common.base.Joiner;
@@ -71,10 +70,8 @@ public class NugetProxyGalleryFacet
   private Cache<QueryCacheKey, Integer> cache;
 
   @Inject
-  public NugetProxyGalleryFacet(
-      final ComponentMetadataFactory componentMetadataFactory, final NugetFeedFetcher fetcher)
+  public NugetProxyGalleryFacet(final NugetFeedFetcher fetcher)
   {
-    super(componentMetadataFactory);
     this.fetcher = fetcher;
   }
 
@@ -112,7 +109,7 @@ public class NugetProxyGalleryFacet
       remoteQuery.put("$top", "" + TWO_PAGES);
     }
 
-    final int remoteCount = passQueryToRemoteRepo(nugetQuery(operation, query), new FeedLoader(fetcher, this));
+    final int remoteCount = passQueryToRemoteRepo(nugetQuery(operation, remoteQuery), new FeedLoader(fetcher, this));
 
     final String feedXml = super.feed(base, operation, query);
 
