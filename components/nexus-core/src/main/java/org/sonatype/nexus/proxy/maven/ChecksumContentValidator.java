@@ -189,6 +189,11 @@ public class ChecksumContentValidator
 
       // If attributes does not contain checksum hash, then attempt to fetch and store it
       String hash = attributes.get(attrname);
+
+      // FIXME: This is unable to detect if the checksum in the proxy is _old_ and needs to be checked in the remote again
+      // FIXME: If we add a check here, then we also have to cope with the proxy-cache invalidation token which is an
+      // FIXME: optimization to expire entire trees, but if not handled here specifically it will cause more problems
+
       if (hash == null || checksumRequest.isRequestAsExpired()) {
         try {
           StorageFileItem checksumItem =
