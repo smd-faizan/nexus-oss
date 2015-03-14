@@ -45,7 +45,9 @@ Ext.define('NX.coreui.view.ssl.SslUseTrustStore', {
           xtype: 'checkbox',
           name: me.name,
           itemId: me.name,
-          boxLabel: me.boxLabel
+          boxLabel: me.boxLabel,
+          inputValue: true,
+          uncheckedValue: false
         },
         {
           xtype: 'button',

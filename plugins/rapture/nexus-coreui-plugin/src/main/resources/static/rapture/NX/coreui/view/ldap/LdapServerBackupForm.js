@@ -46,13 +46,13 @@ Ext.define('NX.coreui.view.ldap.LdapServerBackupForm', {
         var me = this,
           values = me.callParent(arguments);
 
-        values.backupMirrorEnabled = values.backupMirrorEnabled ? true : false;
-
-        if (values.backupMirrorEnabled) {
-          return values;
+        if (values.backupMirrorEnabled === "on") {
+          values.backupMirrorEnabled = true;
         } else {
-          return { "backupMirrorEnabled": false }
+          values.backupMirrorEnabled = false;
         }
+
+        return values;
       }
     });
   },
