@@ -173,9 +173,13 @@ Ext.define('NX.coreui.controller.LdapServers', {
     var me = this;
 
     if (Ext.isDefined(model)) {
+      Ext.suspendLayouts();
+
       me.getConnection().loadRecord(model);
       me.getBackup().loadRecord(model);
       me.getUserAndGroup().loadRecord(model);
+
+      Ext.resumeLayouts(true);
     }
   },
 
@@ -254,6 +258,8 @@ Ext.define('NX.coreui.controller.LdapServers', {
     Ext.apply(values, connectionForm.getValues());
     Ext.apply(values, userGroupForm.getValues());
     Ext.apply(values, backupForm.getValues());
+
+    console.log(JSON.stringify(values));
 
     var modelData = connectionForm.getForm().getRecord().getData(false);
 

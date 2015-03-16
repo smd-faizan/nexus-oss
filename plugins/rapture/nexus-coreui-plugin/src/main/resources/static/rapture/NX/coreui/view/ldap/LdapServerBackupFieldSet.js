@@ -27,6 +27,7 @@ Ext.define('NX.coreui.view.ldap.LdapServerBackupFieldSet', {
   title: NX.I18n.get('ADMIN_LDAP_BACKUP_USE'),
   checkboxToggle: true,
   checkboxName: 'backupMirrorEnabled',
+  collapsed: true,
 
   defaults: {
     xtype: 'textfield',
@@ -65,8 +66,7 @@ Ext.define('NX.coreui.view.ldap.LdapServerBackupFieldSet', {
         ['ldap', NX.I18n.get('ADMIN_LDAP_CONNECTION_PROTOCOL_PLAIN_ITEM')],
         ['ldaps', NX.I18n.get('ADMIN_LDAP_CONNECTION_PROTOCOL_SECURE_ITEM')]
       ],
-      queryMode: 'local',
-      backupMirror: [true]
+      queryMode: 'local'
     },
     {
       xtype: 'label',
@@ -79,8 +79,7 @@ Ext.define('NX.coreui.view.ldap.LdapServerBackupFieldSet', {
       blankText: 'Required',
       width: 405,
       emptyText: NX.I18n.get('ADMIN_LDAP_CONNECTION_HOST_PLACEHOLDER'),
-      itemId: 'backupMirrorHost',
-      backupMirror: [true]
+      itemId: 'backupMirrorHost'
     },
     {
       xtype: 'label',
@@ -98,8 +97,7 @@ Ext.define('NX.coreui.view.ldap.LdapServerBackupFieldSet', {
       minValue: 1,
       maxValue: 65535,
       allowDecimals: false,
-      allowExponential: false,
-      backupMirror: [true]
+      allowExponential: false
     }
   ]
 
