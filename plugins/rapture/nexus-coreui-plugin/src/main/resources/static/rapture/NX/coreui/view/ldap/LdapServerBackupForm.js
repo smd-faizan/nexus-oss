@@ -36,25 +36,6 @@ Ext.define('NX.coreui.view.ldap.LdapServerBackupForm', {
     me.editableCondition = me.editableCondition || NX.Conditions.isPermitted('security:ldapconfig', 'update');
 
     me.callParent(arguments);
-
-    Ext.override(me.getForm(), {
-      /**
-       * @override
-       * If selected, replaced the input value of the fieldset checkbox with true
-       */
-      getValues: function() {
-        var me = this,
-          values = me.callParent(arguments);
-
-        if (values.backupMirrorEnabled === "on") {
-          values.backupMirrorEnabled = true;
-        } else {
-          values.backupMirrorEnabled = false;
-        }
-
-        return values;
-      }
-    });
   },
 
   /**

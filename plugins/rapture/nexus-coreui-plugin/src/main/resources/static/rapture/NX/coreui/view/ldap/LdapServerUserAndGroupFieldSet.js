@@ -59,9 +59,7 @@ Ext.define('NX.coreui.view.ldap.LdapServerUserAndGroupFieldSet', {
       xtype: 'checkbox',
       name: 'userSubtree',
       fieldLabel: NX.I18n.get('ADMIN_LDAP_USER_SUBTREE'),
-      helpText: NX.I18n.get('ADMIN_LDAP_USER_SUBTREE_HELP'),
-      uncheckedValue: false,
-      inputValue: true
+      helpText: NX.I18n.get('ADMIN_LDAP_USER_SUBTREE_HELP')
     },
     {
       name: 'userObjectClass',
@@ -97,8 +95,6 @@ Ext.define('NX.coreui.view.ldap.LdapServerUserAndGroupFieldSet', {
       xtype: 'checkbox',
       name: 'ldapGroupsAsRoles',
       fieldLabel: NX.I18n.get('ADMIN_LDAP_GROUP_MAP'),
-      uncheckedValue: false,
-      inputValue: true,
       value: true,
       listeners: {
         change: function (checkbox, newValue) {
