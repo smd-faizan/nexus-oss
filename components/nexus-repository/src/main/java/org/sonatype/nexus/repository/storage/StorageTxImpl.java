@@ -27,6 +27,7 @@ import org.sonatype.nexus.common.stateguard.StateGuard;
 import org.sonatype.nexus.common.stateguard.StateGuardAware;
 import org.sonatype.nexus.common.stateguard.Transitions;
 import org.sonatype.nexus.orient.graph.GraphTx;
+import org.sonatype.nexus.repository.IllegalOperationException;
 import org.sonatype.nexus.repository.Repository;
 import org.sonatype.nexus.repository.util.NestedAttributesMap;
 import org.sonatype.sisu.goodies.common.ComponentSupport;
@@ -75,15 +76,19 @@ public class StorageTxImpl
 
   private final Object bucketId;
 
+  private final WritePolicy writePolicy;
+
   private final StateGuard stateGuard = new StateGuard.Builder().initial(CLOSED).create();
 
   public StorageTxImpl(final BlobTx blobTx,
                        final GraphTx graphTx,
-                       final Object bucketId)
+                       final Object bucketId,
+                       final WritePolicy writePolicy)
   {
     this.blobTx = checkNotNull(blobTx);
     this.graphTx = checkNotNull(graphTx);
     this.bucketId = checkNotNull(bucketId);
+    this.writePolicy = writePolicy;
   }
 
   public static final class State
@@ -434,9 +439,16 @@ public class StorageTxImpl
     checkNotNull(hashAlgorithms);
     checkNotNull(contentType);
 
+    if (writePolicy == WritePolicy.DENY) {
+      throw new IllegalOperationException("Repository is read only.");
+    }
+
     // Delete old blob if necessary
     String oldBlobRefString = asset.getProperty(P_BLOB_REF);
     if (oldBlobRefString != null) {
+      if (writePolicy == WritePolicy.ALLOW_ONCE) {
+        throw new IllegalOperationException("Repository does not allow updating assets.");
+      }
       deleteBlob(BlobRef.parse(oldBlobRefString));
     }
 
@@ -471,7 +483,9 @@ public class StorageTxImpl
   @Guarded(by = OPEN)
   public void deleteBlob(final BlobRef blobRef) {
     checkNotNull(blobRef);
-
+    if (writePolicy == WritePolicy.DENY) {
+      throw new IllegalOperationException("Repository is read only.");
+    }
     blobTx.delete(blobRef);
   }
 
