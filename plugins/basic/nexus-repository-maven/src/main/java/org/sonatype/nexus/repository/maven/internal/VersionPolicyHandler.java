@@ -16,27 +16,22 @@ import javax.annotation.Nonnull;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.sonatype.nexus.repository.content.InvalidContentException;
 import org.sonatype.nexus.repository.http.HttpResponses;
+import org.sonatype.nexus.repository.maven.internal.MavenPath.Coordinates;
+import org.sonatype.nexus.repository.maven.internal.policy.VersionPolicy;
 import org.sonatype.nexus.repository.view.Context;
 import org.sonatype.nexus.repository.view.Handler;
-import org.sonatype.nexus.repository.view.Payload;
 import org.sonatype.nexus.repository.view.Response;
 import org.sonatype.sisu.goodies.common.ComponentSupport;
 
-import static org.sonatype.nexus.repository.http.HttpMethods.DELETE;
-import static org.sonatype.nexus.repository.http.HttpMethods.GET;
-import static org.sonatype.nexus.repository.http.HttpMethods.HEAD;
-import static org.sonatype.nexus.repository.http.HttpMethods.PUT;
-
 /**
- * Maven hosted handler.
+ * Maven version policy handler.
  *
  * @since 3.0
  */
 @Singleton
 @Named
-public class HostedHandler
+public class VersionPolicyHandler
     extends ComponentSupport
     implements Handler
 {
@@ -45,37 +40,21 @@ public class HostedHandler
   public Response handle(final @Nonnull Context context) throws Exception {
     final MavenPath path = context.getAttributes().require(MavenPath.class);
     final MavenFacet mavenFacet = context.getRepository().facet(MavenFacet.class);
-    final String action = context.getRequest().getAction();
-    switch (action) {
-      case GET:
-      case HEAD: {
-        final Payload content = mavenFacet.get(path);
-        if (content == null) {
-          return HttpResponses.notFound(path.getPath());
-        }
-        return HttpResponses.ok(content);
-      }
-
-      case PUT: {
-        try {
-          mavenFacet.put(path, context.getRequest().getPayload());
-          return HttpResponses.created();
-        }
-        catch (InvalidContentException e) {
-          return HttpResponses.badRequest(e.getMessage());
-        }
-      }
-
-      case DELETE: {
-        final boolean deleted = mavenFacet.delete(path);
-        if (!deleted) {
-          return HttpResponses.notFound(path.getPath());
-        }
-        return HttpResponses.noContent();
-      }
-
-      default:
-        return HttpResponses.methodNotAllowed(context.getRequest().getAction(), GET, HEAD, PUT, DELETE);
+    final VersionPolicy versionPolicy = mavenFacet.getVersionPolicy();
+    if (path.getCoordinates() != null && !allowsArtifactRepositoryPath(versionPolicy, path.getCoordinates())) {
+      return HttpResponses.badRequest("Repository version policy: " + versionPolicy + " does not allow version: " +
+          path.getCoordinates().getVersion());
     }
+    return context.proceed();
+  }
+
+  private boolean allowsArtifactRepositoryPath(final VersionPolicy versionPolicy, final Coordinates coordinates) {
+    if (versionPolicy == VersionPolicy.SNAPSHOT) {
+      return coordinates.isSnapshot();
+    }
+    if (versionPolicy == VersionPolicy.RELEASE) {
+      return !coordinates.isSnapshot();
+    }
+    return true;
   }
 }
