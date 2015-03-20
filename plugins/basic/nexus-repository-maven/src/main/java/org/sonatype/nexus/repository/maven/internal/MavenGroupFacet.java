@@ -26,12 +26,14 @@ import org.sonatype.nexus.repository.group.GroupFacetImpl;
 import org.sonatype.nexus.repository.http.HttpStatus;
 import org.sonatype.nexus.repository.manager.RepositoryManager;
 import org.sonatype.nexus.repository.maven.internal.MavenPath.HashType;
+import org.sonatype.nexus.repository.storage.AssetEvent;
 import org.sonatype.nexus.repository.view.Payload;
 import org.sonatype.nexus.repository.view.PayloadResponse;
 import org.sonatype.nexus.repository.view.Response;
 import org.sonatype.nexus.repository.view.payloads.BlobPayload;
 import org.sonatype.nexus.repository.view.payloads.StringPayload;
 
+import com.google.common.eventbus.Subscribe;
 import com.google.common.hash.HashCode;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -100,6 +102,11 @@ public class MavenGroupFacet
     mavenFacet.put(mavenPath.hash(HashType.MD5), new StringPayload(md5HashCode.toString(), "text/plain"));
   }
 
-
-  // TODO: asset event listening and using MavenFacet.delete maybe to delete invalidated elementsl
+  // TODO: asset event listening and using MavenFacet.delete maybe to delete invalidated elements
+  //@Subscribe
+  public void onAssetEvent(final AssetEvent event) {
+    // IF event coming from a member
+    // AND event is for a metadata MavenPath
+    // THEN mavenFacet.delete
+  }
 }
