@@ -318,11 +318,11 @@ public class MavenFacetImpl
   @Override
   public DateTime getLastVerified(final MavenPath path) throws IOException {
     try (StorageTx tx = getStorage().openTx()) {
-      final OrientVertex asset = findAsset(tx, tx.getBucket(), path);
+      final Asset asset = findAsset(tx, tx.getBucket(), path);
       if (asset == null) {
         return null;
       }
-      final NestedAttributesMap attributes = getFormatAttributes(tx, asset);
+      final NestedAttributesMap attributes = asset.formatAttributes();
       final Date date = attributes.get(P_LAST_VERIFIED, Date.class);
       if (date == null) {
         return null;
@@ -334,11 +334,11 @@ public class MavenFacetImpl
   @Override
   public boolean setLastVerified(final MavenPath path, final DateTime verified) throws IOException {
     try (StorageTx tx = getStorage().openTx()) {
-      final OrientVertex asset = findAsset(tx, tx.getBucket(), path);
+      final Asset asset = findAsset(tx, tx.getBucket(), path);
       if (asset == null) {
         return false;
       }
-      final NestedAttributesMap attributes = getFormatAttributes(tx, asset);
+      final NestedAttributesMap attributes = asset.formatAttributes();
       attributes.set(P_LAST_VERIFIED, verified.toDate());
       tx.commit();
       return true;
