@@ -90,12 +90,14 @@ public class MavenGroupFacet
     return getCachedMergedMetadata(mavenPath);
   }
 
-  public void cacheMergedMetadata(final MavenPath mavenPath, final Payload payload) throws IOException {
-    checkArgument(!mavenPath.isHash(), "only metadata can be cached!");
+  private void cacheMergedMetadata(final MavenPath mavenPath, final Payload payload) throws IOException {
+    // put the metadata and then put hashes
     mavenFacet.put(mavenPath, payload);
     final BlobPayload blobPayload = mavenFacet.get(mavenPath);
     final HashCode sha1HashCode = blobPayload.getHashCodes().get(HashAlgorithm.SHA1);
     mavenFacet.put(mavenPath.hash(HashType.SHA1), new StringPayload(sha1HashCode.toString(), "text/plain"));
+    final HashCode md5HashCode = blobPayload.getHashCodes().get(HashAlgorithm.MD5);
+    mavenFacet.put(mavenPath.hash(HashType.MD5), new StringPayload(md5HashCode.toString(), "text/plain"));
   }
 
 
