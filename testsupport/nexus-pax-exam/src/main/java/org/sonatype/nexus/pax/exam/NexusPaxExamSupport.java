@@ -14,6 +14,8 @@ package org.sonatype.nexus.pax.exam;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -22,13 +24,17 @@ import org.sonatype.sisu.litmus.testsupport.junit.TestDataRule;
 import org.sonatype.sisu.litmus.testsupport.junit.TestIndexRule;
 import org.sonatype.sisu.litmus.testsupport.port.PortRegistry;
 
+import com.google.common.base.Joiner;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.MavenUtils;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.OptionUtils;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFileExtendOption;
 import org.ops4j.pax.exam.options.MavenUrlReference;
 
 import static org.ops4j.pax.exam.CoreOptions.composite;
@@ -254,6 +260,32 @@ public abstract class NexusPaxExamSupport
     catch (final Exception e) {
       return NEXUS_PAX_EXAM_TIMEOUT_DEFAULT;
     }
+  }
+
+  /**
+   * Replacement for {@link CoreOptions#options(Option...)} to workaround Pax-Exam 'feature'
+   * where only the last 'editConfigurationFileExtend' for a given property key is honoured.
+   */
+  public static Option[] options(final Option... options) {
+    final List<Option> result = new ArrayList<>();
+
+    // filter out the individual nexus-features values
+    final List<String> nexusFeatures = new ArrayList<>();
+    for (final Option o : OptionUtils.expand(options)) {
+      if (o instanceof KarafDistributionConfigurationFileExtendOption) {
+        if ("nexus-features".equals(((KarafDistributionConfigurationFileExtendOption) o).getKey())) {
+          nexusFeatures.add(((KarafDistributionConfigurationFileExtendOption) o).getValue());
+          continue;
+        }
+      }
+      result.add(o);
+    }
+
+    // combine the nexus-features values into a single request
+    result.add(editConfigurationFileExtend("etc/nexus.properties", //
+        "nexus-features", Joiner.on(',').join(nexusFeatures)));
+
+    return result.toArray(new Option[result.size()]);
   }
 
   // -------------------------------------------------------------------------
