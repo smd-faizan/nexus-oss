@@ -13,7 +13,7 @@
 package org.sonatype.nexus.repository;
 
 /**
- * Thrown when an illegal operation has been encounter.
+ * Thrown when an illegal operation has been encountered.
  *
  * @since 3.0
  */
