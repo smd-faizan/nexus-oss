@@ -24,6 +24,7 @@ import javax.inject.Singleton;
 
 import org.sonatype.nexus.common.stateguard.Guarded;
 import org.sonatype.nexus.common.stateguard.StateGuardLifecycleSupport;
+import org.sonatype.nexus.jmx.ManagedObject;
 import org.sonatype.nexus.repository.Recipe;
 import org.sonatype.nexus.repository.Repository;
 import org.sonatype.nexus.repository.config.Configuration;
@@ -46,6 +47,10 @@ import static org.sonatype.nexus.common.stateguard.StateGuardLifecycleSupport.St
  */
 @Named
 @Singleton
+@ManagedObject(
+    domain = "org.sonatype.nexus.repository.manager",
+    description = "Repository manager"
+)
 public class RepositoryManagerImpl
     extends StateGuardLifecycleSupport
     implements RepositoryManager
