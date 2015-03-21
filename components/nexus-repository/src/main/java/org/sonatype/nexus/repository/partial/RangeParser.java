@@ -20,6 +20,8 @@ import org.sonatype.sisu.goodies.common.ComponentSupport;
 import com.google.common.base.Strings;
 import com.google.common.collect.Range;
 
+import static java.util.Collections.singletonList;
+
 /**
  * Parses the "Range" request header.
  *
@@ -30,25 +32,44 @@ import com.google.common.collect.Range;
 class RangeParser
     extends ComponentSupport
 {
-  public List<Range<Long>> determineRanges(final String rangeHeader) {
+  public static final List<Range<Long>> UNSATISFIABLE = null;
+
+  public static final List<Range<Long>> WHOLE_RANGE = Collections.emptyList();
+
+  /**
+   * Returns a list of {@link Range}s, each indicating a range of byte indices (inclusive).
+   *
+   * Range: bytes=0-10 (from byte 0 to byte 10)
+   * Range: bytes=500-999 (from byte 500 to byte 999)
+   * Range: bytes=500- (from byte 500 to the end)
+   * Range: bytes=-500 (the last 500 bytes, per the RFC)
+   *
+   * @return {@code null} if the requested range cannot be satisfied given the size of the content, or an empty list in
+   * the case of parsing errors
+   */
+  public List<Range<Long>> parseRangeSpec(final String rangeHeader, long size) {
+    Range content = Range.closed(0L, size - 1L);
+
     // TODO: Current limitation: only one Range of bytes supported in forms of "-X", "X-Y" (where X<Y) and "X-".
     if (!Strings.isNullOrEmpty(rangeHeader)) {
       try {
         if (rangeHeader.startsWith("bytes=") && rangeHeader.length() > 6 && !rangeHeader.contains(",")) {
-          // Range: bytes=500-999 (from 500th byte to 999th)
-          // Range: bytes=500- (from 500th byte to the end)
-          // Range: bytes=-999 (from 0th byte to the 999th byte, not by RFC but widely supported)
-          final String rangeValue = rangeHeader.substring(6, rangeHeader.length());
-          if (rangeValue.startsWith("-")) {
-            return Collections.singletonList(Range.closed(0L, Long.parseLong(rangeValue.substring(1))));
+          final String rangeSpec = rangeHeader.substring(6, rangeHeader.length());
+          if (rangeSpec.startsWith("-")) {
+            final long byteCount = Long.parseLong(rangeSpec.substring(1));
+            if (byteCount > size) {
+              return UNSATISFIABLE;
+            }
+            final Range<Long> suffix = Range.atLeast(size - byteCount);
+            return ensureSatisfiable(suffix, content);
           }
-          else if (rangeValue.endsWith("-")) {
-            return Collections
-                .singletonList(Range.atLeast(Long.parseLong(rangeValue.substring(0, rangeValue.length() - 1))));
+          else if (rangeSpec.endsWith("-")) {
+            final Range<Long> requested = Range.atLeast(Long.parseLong(rangeSpec.substring(0, rangeSpec.length() - 1)));
+            return ensureSatisfiable(requested, content);
           }
-          else if (rangeValue.contains("-")) {
-            final String[] parts = rangeValue.split("-");
-            return Collections.singletonList(Range.closed(Long.parseLong(parts[0]), Long.parseLong(parts[1])));
+          else if (rangeSpec.contains("-")) {
+            final String[] parts = rangeSpec.split("-");
+            return ensureSatisfiable(Range.closed(Long.parseLong(parts[0]), Long.parseLong(parts[1])), content);
           }
           else {
             log.info("Malformed HTTP Range value: {}, ignoring it", rangeHeader);
@@ -62,13 +83,32 @@ class RangeParser
       }
       catch (Exception e) {
         if (log.isDebugEnabled()) {
-          log.info("Problem parsing Range value: {}, ignoring it", rangeHeader, e);
+          log.debug("Problem parsing Range value: {}, ignoring it", rangeHeader, e);
         }
         else {
           log.info("Problem parsing Range value: {}, ignoring it", rangeHeader);
         }
       }
     }
-    return Collections.emptyList();
+
+    return WHOLE_RANGE;
+  }
+
+  private List<Range<Long>> ensureSatisfiable(Range<Long> requested, Range content) {
+    if (requested.isConnected(content)) {
+      return singletonList(requested.intersection(content));
+    }
+    else {
+      return UNSATISFIABLE;
+    }
+  }
+
+  private boolean isSatisfiable(final Range<Long> range, final long contentSize) {
+    if (!range.hasLowerBound()) {
+      return true;
+    }
+    // Per RFC 2616, a requested range is satisfiable as long as its lower bound is within the content size.
+    // Requests for ranges that extend beyond the content size are okay.
+    return range.lowerEndpoint() < contentSize - 1;
   }
 }

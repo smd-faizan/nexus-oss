@@ -79,9 +79,15 @@ public class PartialFetchHandler
       return response;
     }
 
-    final List<Range<Long>> ranges = rangeParser.determineRanges(rangeHeader);
+    final List<Range<Long>> ranges = rangeParser.parseRangeSpec(rangeHeader, payload.getSize());
+
+    if (ranges == null) {
+      // The ranges were not satisfiable
+      return HttpResponses.rangeNotSatisfiable(payload.getSize());
+    }
 
     if (ranges.isEmpty()) {
+      // No ranges were specified, or they could not be parsed
       return response;
     }
 
@@ -90,10 +96,6 @@ public class PartialFetchHandler
     }
 
     Range requestedRange = ranges.get(0);
-
-    if (!isSatisfiable(requestedRange, payload.getSize())) {
-      return HttpResponses.rangeNotSatisfiable(payload.getSize());
-    }
 
     // Mutate the response
     return partialResponse(payloadResponse, payload, requestedRange);
@@ -106,7 +108,7 @@ public class PartialFetchHandler
                                           final Range requestedRange)
   {
     response.setStatus(Status.success(HttpStatus.SC_PARTIAL_CONTENT));
-    final Range<Long> rangeToSend = requestedRange.intersection(Range.closed(0L, payload.getSize() - 1));
+    final Range<Long> rangeToSend = requestedRange;
 
     Payload partialPayload = new PartialPayload(payload, rangeToSend);
 
@@ -125,12 +127,5 @@ public class PartialFetchHandler
     return request.getHeaders().get("Range");
   }
 
-  private boolean isSatisfiable(final Range<Long> range, final long contentSize) {
-    if (!range.hasLowerBound()) {
-      return true;
-    }
-    // Per RFC 2616, a requested range is satisfiable as long as its lower bound is within the content size.
-    // Requests for ranges that extend beyond the content size are okay.
-    return range.lowerEndpoint() < contentSize - 1;
-  }
+
 }
