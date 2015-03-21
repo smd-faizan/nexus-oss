@@ -15,6 +15,9 @@ package org.sonatype.nexus.repository.partial;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.sonatype.nexus.repository.http.HttpResponses;
 import org.sonatype.nexus.repository.view.Context;
@@ -37,11 +40,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @since 3.0
  */
+@Named
+@Singleton
 public class PartialFetchHandler
     implements Handler
 {
   private final RangeParser rangeParser;
 
+  @Inject
   public PartialFetchHandler(final RangeParser rangeParser) {
     this.rangeParser = checkNotNull(rangeParser);
   }
