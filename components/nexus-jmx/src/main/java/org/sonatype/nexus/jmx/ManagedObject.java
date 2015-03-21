@@ -44,7 +44,6 @@ public @interface ManagedObject
 
   /**
    * Customized object-name 'name' entry.  If unset will default to {@link Named} value.
-   * @return
    */
   String name() default "";
 
