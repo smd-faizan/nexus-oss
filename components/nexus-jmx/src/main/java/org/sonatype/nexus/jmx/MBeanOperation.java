@@ -156,16 +156,16 @@ public class MBeanOperation
       MBeanParameterInfo[] result = new MBeanParameterInfo[names.length];
       for (int i=0; i< names.length; i++) {
         // TODO: generate descriptor
-        Descriptor pdescriptor = null;
+        Descriptor descriptor = null;
 
         // TODO: detect description
-        String pdescription = null;
+        String description = null;
 
         result[i] = new MBeanParameterInfo(
             names[i],
             types[i].getName(),
-            pdescription,
-            pdescriptor
+            description,
+            descriptor
         );
       }
 
