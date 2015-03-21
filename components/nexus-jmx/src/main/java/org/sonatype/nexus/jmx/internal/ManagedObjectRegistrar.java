@@ -54,7 +54,13 @@ public class ManagedObjectRegistrar
 
     this.exporter = checkNotNull(exporter);
 
-    beanLocator.watch(Key.get(Object.class, ManagedObject.class), new ManageObjectMediator(), this);
+    Key<Object> managedObjectKey = Key.get(Object.class, ManagedObject.class);
+    if (managedObjectKey.hasAttributes()) {
+      // workaround Guice 'feature' that upgrades annotation class with all default attributes to an instance
+      // we want the annotation class without attributes here to match against all @ManagedObject annotations
+      managedObjectKey = managedObjectKey.withoutAttributes();
+    }
+    beanLocator.watch(managedObjectKey, new ManageObjectMediator(), this);
   }
 
   private class ManageObjectMediator
