@@ -17,6 +17,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import javax.management.MBeanOperationInfo;
+
 /**
  * Marks a method as a managed operation.
  *
@@ -29,6 +31,8 @@ import java.lang.annotation.Target;
 public @interface ManagedOperation
 {
   String name() default "";
+
+  int impact() default MBeanOperationInfo.UNKNOWN;
 
   String description() default "";
 }

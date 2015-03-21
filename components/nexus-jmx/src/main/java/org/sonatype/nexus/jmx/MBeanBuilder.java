@@ -159,6 +159,7 @@ public class MBeanBuilder
         log.trace("Found operation: {} -> {}", name, method);
         operation()
             .name(name)
+            .impact(operationDescriptor.impact())
             .description(Strings.emptyToNull(operationDescriptor.description()))
             .method(method);
       }

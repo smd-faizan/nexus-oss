@@ -96,6 +96,8 @@ public class MBeanOperation
 
     private Method method;
 
+    private int impact = MBeanOperationInfo.UNKNOWN;
+
     public Builder name(final String name) {
       this.name = name;
       return this;
@@ -116,6 +118,11 @@ public class MBeanOperation
       return this;
     }
 
+    public Builder impact(final int impact) {
+      this.impact = impact;
+      return this;
+    }
+
     public MBeanOperation build() {
       checkState(target != null);
       checkState(method != null);
@@ -124,9 +131,6 @@ public class MBeanOperation
       if (name == null) {
         name = method.getName();
       }
-
-      // TODO: detect impact
-      int impact = MBeanOperationInfo.UNKNOWN;
 
       MBeanOperationInfo info = new MBeanOperationInfo(
           name,
