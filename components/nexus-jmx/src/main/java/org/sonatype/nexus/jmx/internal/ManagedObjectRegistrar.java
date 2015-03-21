@@ -110,6 +110,7 @@ public class ManagedObjectRegistrar
       domain = type.getPackage().getName();
     }
 
+    // Hashtable is required by ancient JMX api
     Hashtable<String, String> entries = new Hashtable<>();
 
     // add custom object-name entries
