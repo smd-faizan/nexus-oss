@@ -30,9 +30,18 @@ import javax.management.MBeanOperationInfo;
 @Target({ElementType.METHOD})
 public @interface ManagedOperation
 {
+  /**
+   * Customized attribute name.  If left unset will use name from method.
+   */
   String name() default "";
 
+  /**
+   * Optional operation impact.
+   */
   int impact() default MBeanOperationInfo.UNKNOWN;
 
+  /**
+   * Optional operation description.
+   */
   String description() default "";
 }

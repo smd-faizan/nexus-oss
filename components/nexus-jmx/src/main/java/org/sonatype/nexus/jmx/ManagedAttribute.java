@@ -29,7 +29,13 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 public @interface ManagedAttribute
 {
+  /**
+   * Customized attribute name.  If left unset will detect attribute-name from method.
+   */
   String name() default "";
 
+  /**
+   * Optional attribute description.
+   */
   String description() default "";
 }

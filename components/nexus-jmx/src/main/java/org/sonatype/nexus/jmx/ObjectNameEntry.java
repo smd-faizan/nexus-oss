@@ -28,7 +28,13 @@ import javax.management.ObjectName;
 @Target({ElementType.ANNOTATION_TYPE})
 public @interface ObjectNameEntry
 {
+  /**
+   * Name of object-name entry.
+   */
   String name();
 
+  /**
+   * Value of object-name entry.
+   */
   String value();
 }

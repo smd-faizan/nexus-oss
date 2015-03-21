@@ -17,6 +17,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import javax.inject.Named;
 import javax.inject.Qualifier;
 
 /**
@@ -31,13 +32,29 @@ import javax.inject.Qualifier;
 @Qualifier
 public @interface ManagedObject
 {
+  /**
+   * Customized object-name domain.  If unset will default to the package-name of the component.
+   */
   String domain() default "";
 
+  /**
+   * Customized object-name 'type' entry.  If unset will default to simple-name of component class.
+   */
   String type() default "";
 
+  /**
+   * Customized object-name 'name' entry.  If unset will default to {@link Named} value.
+   * @return
+   */
   String name() default "";
 
+  /**
+   * Additional entires to customize object-name.
+   */
   ObjectNameEntry[] entries() default {};
 
+  /**
+   * Optional description for MBean.
+   */
   String description() default "";
 }
