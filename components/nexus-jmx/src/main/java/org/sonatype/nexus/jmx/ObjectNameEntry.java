@@ -10,23 +10,25 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.nexus.jmx.internal;
+package org.sonatype.nexus.jmx;
 
-import javax.inject.Named;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import com.google.inject.AbstractModule;
+import javax.management.ObjectName;
 
 /**
- * JMX module.
+ * Key-value entry for {@link ObjectName} customization.
  *
  * @since 3.0
  */
-@Named
-public class JmxModule
-  extends AbstractModule
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.ANNOTATION_TYPE})
+public @interface ObjectNameEntry
 {
-  @Override
-  protected void configure() {
-    // TODO: impl or remove
-  }
+  String name();
+
+  String value();
 }

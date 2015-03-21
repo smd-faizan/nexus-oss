@@ -10,6 +10,7 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
+
 package org.sonatype.nexus.jmx;
 
 import java.lang.annotation.ElementType;
@@ -17,18 +18,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.inject.Qualifier;
-
 /**
- * ???
+ * Marks a method as a managed attribute.
  *
+ * @see ManagedObject
+ * @see ManagedOperation
  * @since 3.0
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.ANNOTATION_TYPE})
-public @interface ManagedProperty
+@Target({ElementType.METHOD})
+public @interface ManagedAttribute
 {
-  String name();
+  String name() default "";
 
-  String value();
+  String description() default "";
 }

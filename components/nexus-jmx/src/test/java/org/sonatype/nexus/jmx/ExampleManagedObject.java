@@ -22,9 +22,9 @@ import javax.inject.Singleton;
 @Singleton
 @ManagedObject(
     domain = "org.sonatype.nexus.jmx",
-    //properties = {
-    //    @ManagedProperty("example=yes")
-    //},
+    entries = {
+        @ObjectNameEntry(name="foo", value="bar")
+    },
     description = "Example managed object"
 )
 public class ExampleManagedObject
@@ -35,12 +35,12 @@ public class ExampleManagedObject
 
   // R/W attribute
 
-  //@ManagedMember
+  @ManagedAttribute
   public String getName() {
     return name;
   }
 
-  //@ManagedMember
+  @ManagedAttribute
   public void setName(final String name) {
     this.name = name;
   }
@@ -51,14 +51,18 @@ public class ExampleManagedObject
     return password;
   }
 
-  //@ManagedMember
+  @ManagedAttribute(
+      description = "Set password"
+  )
   public void setPassword(final String password) {
     this.password = password;
   }
 
   // Operation
 
-  //@ManagedMember
+  @ManagedOperation(
+      description = "Reset name"
+  )
   public void resetName() {
     this.name = null;
   }

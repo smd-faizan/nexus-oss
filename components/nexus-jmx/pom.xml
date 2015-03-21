@@ -34,9 +34,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.weakref</groupId>
-      <artifactId>jmxutils</artifactId>
-      <version>1.18</version>
+      <groupId>com.thoughtworks.paranamer</groupId>
+      <artifactId>paranamer</artifactId>
     </dependency>
 
     <dependency>

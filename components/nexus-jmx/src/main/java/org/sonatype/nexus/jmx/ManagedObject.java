@@ -20,8 +20,10 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
- * ???
+ * Marks a component for JMX management.
  *
+ * @see ManagedAttribute
+ * @see ManagedOperation
  * @since 3.0
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -31,7 +33,7 @@ public @interface ManagedObject
 {
   String domain() default "";
 
-  ManagedProperty[] properties() default {};
+  ObjectNameEntry[] entries() default {};
 
   String description() default "";
 }
