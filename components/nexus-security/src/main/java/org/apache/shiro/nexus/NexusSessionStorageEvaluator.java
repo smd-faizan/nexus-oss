@@ -10,21 +10,31 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.nexus.repository.simple;
+package org.apache.shiro.nexus;
 
-import org.sonatype.nexus.repository.Repository;
+import org.sonatype.nexus.security.anonymous.AnonymousHelper;
+
+import org.apache.shiro.mgt.SessionStorageEvaluator;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.web.mgt.DefaultWebSessionStorageEvaluator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Simple content updated event.
+ * Custom {@link SessionStorageEvaluator}.
  *
  * @since 3.0
  */
-public class SimpleContentUpdatedEvent
-  extends SimpleContentEvent
+public class NexusSessionStorageEvaluator
+  extends DefaultWebSessionStorageEvaluator
 {
-  public SimpleContentUpdatedEvent(final Repository repository,
-                                   final SimpleContent content)
-  {
-    super(repository, content);
+  private static final Logger log = LoggerFactory.getLogger(NexusSessionStorageEvaluator.class);
+
+  /**
+   * Disable storage for anonymous subject.
+   */
+  @Override
+  public boolean isSessionStorageEnabled(final Subject subject) {
+    return !AnonymousHelper.isAnonymous(subject) && super.isSessionStorageEnabled(subject);
   }
 }

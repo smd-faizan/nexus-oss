@@ -10,43 +10,27 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.nexus.repository.simple;
+package org.apache.shiro.nexus;
 
-import org.sonatype.nexus.repository.Repository;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.apache.shiro.mgt.DefaultSubjectDAO;
+import org.apache.shiro.mgt.SubjectDAO;
+import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Simple content event.
+ * Custom {@link SubjectDAO}.
  *
  * @since 3.0
  */
-public abstract class SimpleContentEvent
+public class NexusSubjectDAO
+  extends DefaultSubjectDAO
 {
-  private final Repository repository;
-
-  private final SimpleContent content;
-
-  public SimpleContentEvent(final Repository repository,
-                            final SimpleContent content)
-  {
-    this.repository = checkNotNull(repository);
-    this.content = checkNotNull(content);
-  }
-
-  public Repository getRepository() {
-    return repository;
-  }
-
-  public SimpleContent getContent() {
-    return content;
-  }
+  private static final Logger log = LoggerFactory.getLogger(NexusSubjectDAO.class);
 
   @Override
-  public String toString() {
-    return getClass().getSimpleName() + "{" +
-        "repository=" + repository.getName() +
-        ", content=" + content +
-        '}';
+  public Subject save(final Subject subject) {
+    log.trace("Saving: {}", subject);
+    return super.save(subject);
   }
 }

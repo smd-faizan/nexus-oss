@@ -10,28 +10,28 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
+package org.apache.shiro.nexus;
 
-package org.sonatype.nexus.repository.simple.internal;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.sonatype.nexus.repository.security.SecurityFacetSupport;
-import org.sonatype.nexus.security.SecurityHelper;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.SessionContext;
+import org.apache.shiro.session.mgt.SessionFactory;
+import org.apache.shiro.session.mgt.SimpleSessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Simple security facet.
+ * Custom {@link SessionFactory}.
  *
  * @since 3.0
  */
-@Named
-public class SimpleSecurityFacet
-    extends SecurityFacetSupport
+public class NexusSessionFactory
+  extends SimpleSessionFactory
 {
-  @Inject
-  public SimpleSecurityFacet(final SecurityHelper securityHelper,
-                             final SimpleFormatSecurityConfigurationResource securityResource)
-  {
-    super(securityHelper, securityResource);
+  private static final Logger log = LoggerFactory.getLogger(NexusSessionFactory.class);
+
+  @Override
+  public Session createSession(final SessionContext initData) {
+    log.trace("Creating session w/init-data: {}", initData);
+    return super.createSession(initData);
   }
 }

@@ -10,29 +10,30 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.nexus.repository.simple.internal;
+package org.apache.shiro.nexus;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import java.io.Serializable;
 
-import org.sonatype.nexus.repository.Format;
-
-import com.google.common.annotations.VisibleForTesting;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
+import org.apache.shiro.session.mgt.eis.SessionDAO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Simple (raw in-memory) repository format.
+ * Custom {@link SessionDAO}.
  *
  * @since 3.0
  */
-@Named(SimpleFormat.NAME)
-@Singleton
-public class SimpleFormat
-  extends Format
+public class NexusSessionDAO
+  extends EnterpriseCacheSessionDAO
 {
-  public static final String NAME = "simple";
+  private static final Logger log = LoggerFactory.getLogger(NexusSessionDAO.class);
 
-  @VisibleForTesting
-  public SimpleFormat() {
-    super(NAME);
+  @Override
+  protected Serializable doCreate(final Session session) {
+    Serializable id = super.doCreate(session);
+    log.trace("Created session-id: {} for session: {}", id, session);
+    return id;
   }
 }
