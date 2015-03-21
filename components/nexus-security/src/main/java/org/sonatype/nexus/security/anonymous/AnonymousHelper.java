@@ -10,27 +10,25 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.nexus.repository.simple;
+package org.sonatype.nexus.security.anonymous;
 
 import javax.annotation.Nullable;
 
-import org.sonatype.nexus.repository.Facet;
+import org.apache.shiro.subject.Subject;
 
 /**
- * Simple contents facet.
+ * Anonymous helpers.
  *
  * @since 3.0
  */
-@Facet.Exposed
-public interface SimpleContentsFacet
-  extends Facet
+public class AnonymousHelper
 {
-  @Nullable
-  SimpleContent get(String name);
+  private AnonymousHelper() {}
 
-  @Nullable
-  SimpleContent put(String name, SimpleContent content);
-
-  @Nullable
-  SimpleContent delete(String name);
+  /**
+   * Check given given subject is anonymous.
+   */
+  public static boolean isAnonymous(final @Nullable Subject subject) {
+    return subject != null && subject.getPrincipals() instanceof AnonymousPrincipalCollection;
+  }
 }
