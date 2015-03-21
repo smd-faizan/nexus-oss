@@ -117,16 +117,24 @@ public class ManagedObjectRegistrar
       entries.put(kv.name(), kv.value());
     }
 
-    // add class-name as type
-    entries.put("type", type.getSimpleName());
+    // set object-name 'type'
+    String otype = Strings.emptyToNull(descriptor.type());
+    if (otype == null) {
+      otype = type.getSimpleName();
+    }
+    entries.put("type", otype);
 
-    // add binding-name if present
-    Named name = type.getAnnotation(Named.class);
-    if (name != null) {
-      String value = Strings.emptyToNull(name.value());
-      if (value != null) {
-        entries.put("name", value);
+    // optionally set object-name 'name'
+    String oname = Strings.emptyToNull(descriptor.name());
+    if (oname == null) {
+      // default to binding-name if present
+      Named name = type.getAnnotation(Named.class);
+      if (name != null) {
+        oname = Strings.emptyToNull(name.value());
       }
+    }
+    if (oname != null) {
+      entries.put("name", oname);
     }
 
     return new ObjectName(domain, entries);
@@ -139,15 +147,22 @@ public class ManagedObjectRegistrar
     Class<?> type = entry.getImplementationClass();
     ManagedObject descriptor = type.getAnnotation(ManagedObject.class);
 
+    // allow custom description, or expose what sisu tells us
+    String description = Strings.emptyToNull(descriptor.description());
+    if (description == null) {
+      description = entry.getDescription();
+    }
+
     return new MBeanBuilder(type.getName())
         .target(new Supplier()
         {
           @Override
           public Object get() {
+            // TODO: Sort out if getProvider().get() is more appropriate here?
             return entry.getValue();
           }
         })
-        .description(Strings.emptyToNull(descriptor.description()))
+        .description(description)
         .discover(type)
         .build();
   }

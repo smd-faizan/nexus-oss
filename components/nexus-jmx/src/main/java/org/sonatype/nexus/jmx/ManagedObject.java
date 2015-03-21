@@ -33,6 +33,10 @@ public @interface ManagedObject
 {
   String domain() default "";
 
+  String type() default "";
+
+  String name() default "";
+
   ObjectNameEntry[] entries() default {};
 
   String description() default "";
