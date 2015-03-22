@@ -20,10 +20,11 @@ import javax.inject.Named;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.sonatype.nexus.jmx.ConstantMBeanAttribute;
 import org.sonatype.nexus.jmx.MBean;
-import org.sonatype.nexus.jmx.MBeanBuilder;
 import org.sonatype.nexus.jmx.ManagedObject;
 import org.sonatype.nexus.jmx.ObjectNameEntry;
+import org.sonatype.nexus.jmx.reflect.ReflectionMBeanBuilder;
 import org.sonatype.sisu.goodies.common.ComponentSupport;
 
 import com.google.common.base.Strings;
@@ -154,17 +155,23 @@ public class ManagedObjectRegistrar
       description = entry.getDescription();
     }
 
-    return new MBeanBuilder(type.getName())
-        .target(new Supplier()
-        {
-          @Override
-          public Object get() {
-            // TODO: Sort out if getProvider().get() is more appropriate here?
-            return entry.getValue();
-          }
-        })
-        .description(description)
-        .discover(type)
-        .build();
+    ReflectionMBeanBuilder builder = new ReflectionMBeanBuilder(type.getName());
+    builder.target(new Supplier()
+    {
+      @Override
+      public Object get() {
+        // TODO: Sort out if getProvider().get() is more appropriate here?
+        return entry.getValue();
+      }
+    });
+    builder.description(description);
+    builder.discover(type);
+    builder.attribute(new ConstantMBeanAttribute.Builder()
+            .name("sisu.rank")
+            .description("Sisu binding rank")
+            .value(entry.getRank())
+            .build()
+    );
+    return builder.build();
   }
 }

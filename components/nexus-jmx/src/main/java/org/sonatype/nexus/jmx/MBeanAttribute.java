@@ -10,174 +10,23 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
+
 package org.sonatype.nexus.jmx;
 
-import java.lang.reflect.Method;
-
-import javax.annotation.Nullable;
-import javax.management.Descriptor;
-import javax.management.ImmutableDescriptor;
 import javax.management.MBeanAttributeInfo;
-
-import org.sonatype.sisu.goodies.common.ComponentSupport;
-
-import com.google.common.base.Supplier;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 /**
  * MBean attribute.
  *
  * @since 3.0
  */
-public class MBeanAttribute
-  extends ComponentSupport
+public interface MBeanAttribute
 {
-  private final MBeanAttributeInfo info;
+  MBeanAttributeInfo getInfo();
 
-  private final Supplier target;
+  String getName();
 
-  private final Method getter;
+  Object getValue() throws Exception;
 
-  private final Method setter;
-
-  public MBeanAttribute(final MBeanAttributeInfo info,
-                        final Supplier target,
-                        final @Nullable Method getter,
-                        final @Nullable Method setter)
-  {
-    this.info = checkNotNull(info);
-    this.target = checkNotNull(target);
-    this.getter = getter;
-    this.setter = setter;
-  }
-
-  public MBeanAttributeInfo getInfo() {
-    return info;
-  }
-
-  public String getName() {
-    return info.getName();
-  }
-
-  public Supplier getTarget() {
-    return target;
-  }
-
-  public Method getGetter() {
-    return getter;
-  }
-
-  public Method getSetter() {
-    return setter;
-  }
-
-  private Object target() {
-    Object result = target.get();
-    checkState(result != null);
-    return result;
-  }
-
-  public Object getValue() throws Exception {
-    checkState(getter != null);
-    log.debug("Get value: {}", getter);
-    //noinspection ConstantConditions
-    return getter.invoke(target());
-  }
-
-  public void setValue(final Object value) throws Exception {
-    checkState(setter != null);
-    log.debug("Set value: {} -> {}", value, setter);
-    //noinspection ConstantConditions
-    setter.invoke(target(), value);
-  }
-
-  //
-  // Builder
-  //
-
-  /**
-   * {@link MBeanAttribute} builder.
-   */
-  public static class Builder
-    extends ComponentSupport
-  {
-    private String name;
-
-    private String description;
-
-    private Supplier target;
-
-    private Method getter;
-
-    private Method setter;
-
-    public Builder name(final String name) {
-      this.name = name;
-      return this;
-    }
-
-    public Builder description(final String description) {
-      this.description = description;
-      return this;
-    }
-
-    public Builder target(final Supplier target) {
-      this.target = target;
-      return this;
-    }
-
-    public Builder getter(final Method getter) {
-      this.getter = getter;
-      return this;
-    }
-
-    public Builder setter(final Method setter) {
-      this.setter = setter;
-      return this;
-    }
-
-    public MBeanAttribute build() {
-      checkState(name != null);
-      checkState(target != null);
-      checkState(getter != null || setter != null);
-
-      MBeanAttributeInfo info = new MBeanAttributeInfo(
-          name,
-          attributeType(getter, setter).getName(),
-          description,
-          getter != null, // readable
-          setter != null, // writable
-          isIs(getter),
-          ImmutableDescriptor.union(descriptor(getter), descriptor(setter))
-      );
-
-      return new MBeanAttribute(info, target, getter, setter);
-    }
-
-    //
-    // Helpers
-    //
-
-    private Class attributeType(final Method getter, final Method setter) {
-      // TODO: sanity check methods
-      if (getter != null) {
-        return getter.getReturnType();
-      }
-      else {
-        return setter.getParameterTypes()[0];
-      }
-    }
-
-    private boolean isIs(final Method getter) {
-      // TODO: sanity check method
-      return getter != null && getter.getName().startsWith("is");
-    }
-
-    private Descriptor descriptor(final Method method) {
-      // TODO: generate descriptor
-      return null;
-    }
-  }
+  void setValue(Object value) throws Exception;
 }
